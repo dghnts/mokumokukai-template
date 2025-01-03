@@ -1,0 +1,28 @@
+name: Remove Marp Settings from Markdown
+
+on:
+  push:
+    branches:
+      - main  # mainブランチへのpushをトリガー
+
+jobs:
+  remove-marp-settings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Marp設定をコメントアウトするスクリプトを実行
+      - name: Comment out Marp settings
+        run: |
+          cat combined/slides/slides.md
+          python scripts/comment_out_marp_settings.py  # スクリプトで設定部分をコメントアウト
+
+      # コメントアウト後に変更をコミットしてプッシュ
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git commit -m "Comment out Marp settings"
+          git push
